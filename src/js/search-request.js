@@ -6,12 +6,12 @@ const BASE_URL = `https://pixabay.com/api`;
 axios.defaults.baseURL = BASE_URL;
 
 async function searchRequest(searchQuery) {
-  const params = `&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true`;
+  const params = `&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40`;
   try {
     const response = await axios.get(`/?key=${API_KEY}${params}`);
     return response;
   } catch (error) {
-    console.error(error);
+    console.error('ERROR From search-request', error);
   }
 }
 
