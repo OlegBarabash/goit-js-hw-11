@@ -1,11 +1,18 @@
 import { searchRequest } from './js/search-request';
 import Notiflix from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const search = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
 const loadMore = document.querySelector('.load-more');
 let searchQuery = '';
 let page;
+let galleryLightbox = new SimpleLightbox('.photo-card a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+  captionPosition: 'bottom',
+});
 
 search.addEventListener('submit', handlerSearch);
 loadMore.addEventListener('click', handlerLoadeMore);
@@ -29,8 +36,10 @@ async function renderCards() {
     const {
       data: { hits, totalHits },
     } = await searchRequest(searchQuery, page);
-    if (!hits.length) {
+    if (!totalHits) {
       throw new Error('Empty');
+    } else if (page === 1) {
+      Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
     }
     gallery.insertAdjacentHTML('beforeend', getMarkup(hits));
     if (totalHits <= page * 40) {
@@ -46,30 +55,41 @@ async function renderCards() {
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
+  galleryLightbox.refresh();
 }
 
 function getMarkup(arr) {
   const markap = arr
     .map(
-      info =>
+      ({
+        largeImageURL,
+        webformatURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) =>
         `<div class="photo-card">
-    <img src="${info.webformatURL}" alt="${info.tags}" loading="lazy" />
+        <a href="${largeImageURL}">
+            <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+        </a>
     <div class="info">
       <p class="info-item">
         <b>Likes</b>
-         ${info.likes}
+         ${likes}
       </p>
       <p class="info-item">
         <b>Views</b>
-         ${info.views}
+         ${views}
       </p>
       <p class="info-item">
         <b>Comments</b>
-         ${info.comments}
+         ${comments}
       </p>
       <p class="info-item">
         <b>Downloads</b>
-         ${info.downloads}
+         ${downloads}
       </p>
     </div>
   </div>`

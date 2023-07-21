@@ -6,9 +6,20 @@ const BASE_URL = `https://pixabay.com/api`;
 axios.defaults.baseURL = BASE_URL;
 
 async function searchRequest(searchQuery, page = 1) {
-  const params = `&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`;
-  const response = await axios.get(`/?key=${API_KEY}${params}`);
-  return response;
+  const params = {
+    params: {
+      q: searchQuery,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: 'true',
+      per_page: 40,
+      page: page,
+    },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  return await axios.get(`/?key=${API_KEY}`, params);
 }
 
 export { searchRequest };
