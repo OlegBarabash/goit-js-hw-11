@@ -5,33 +5,59 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const search = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
-const loadMore = document.querySelector('.load-more');
+//const loadeMoreBtn = document.querySelector('.load-more');
+const loadMoreGuard = document.querySelector('.js-guard');
+
 let searchQuery = '';
 let page;
-let galleryLightbox = new SimpleLightbox('.photo-card a', {
+const galleryLightbox = new SimpleLightbox('.photo-card a', {
   captionsData: 'alt',
   captionDelay: 250,
   captionPosition: 'bottom',
 });
 
 search.addEventListener('submit', handlerSearch);
-loadMore.addEventListener('click', handlerLoadeMore);
+//loadeMoreBtn.addEventListener('click', handlerLoadeMore);
 
-function handlerSearch(ev) {
+const options = {
+  root: null,
+  rootMargin: '300px',
+  threshold: 0,
+};
+
+const observer = new IntersectionObserver(handlerInfiniteScroll, options);
+
+async function handlerSearch(ev) {
   ev.preventDefault();
-  loadMore.hidden = true;
+  //loadeMoreBtn.hidden = true;
   gallery.innerHTML = '';
   page = 1;
   searchQuery = ev.currentTarget.searchQuery.value;
-  renderCards();
+  if (!searchQuery.trim()) {
+    return;
+  }
+  await renderCards();
+  if (gallery.children.length === 40) {
+    observer.observe(loadMoreGuard);
+  }
 }
 
-function handlerLoadeMore() {
+function handlerInfiniteScroll(entries) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      handlerLoadeMore();
+    }
+  });
+}
+
+async function handlerLoadeMore() {
   page += 1;
-  renderCards();
+  await renderCards();
+  smoothScroll();
 }
 
 async function renderCards() {
+  console.log(' renderCards() call');
   try {
     const {
       data: { hits, totalHits },
@@ -46,10 +72,12 @@ async function renderCards() {
       Notiflix.Notify.info(
         "We're sorry, but you've reached the end of search results."
       );
-      loadMore.hidden = true;
-    } else {
-      loadMore.hidden = false;
+      observer.unobserve(loadMoreGuard);
+      //loadeMoreBtn.hidden = true;
     }
+    // else {
+    //   loadeMoreBtn.hidden = false;
+    // }
   } catch (error) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
@@ -96,4 +124,15 @@ function getMarkup(arr) {
     )
     .join('');
   return markap;
+}
+
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }

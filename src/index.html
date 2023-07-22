@@ -7,19 +7,22 @@
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
-    <form class="search-form" id="search-form">
-      <input
-        type="text"
-        name="searchQuery"
-        autocomplete="off"
-        placeholder="Search images..."
-      />
-      <button type="submit">Search</button>
-    </form>
-    <div class="gallery">
-      <!-- Картки зображень -->
+    <div class="container">
+      <form class="search-form" id="search-form">
+        <input
+          class="form__field"
+          type="text"
+          name="searchQuery"
+          autocomplete="off"
+          placeholder="Search images..."
+        />
+        <button class="btn" type="submit">Search</button>
+      </form>
     </div>
-    <button type="button" class="load-more" hidden>Load more</button>
+
+    <div class="gallery"></div>
+    <div class="js-guard"></div>
+    <!-- <button type="button" class="load-more" hidden>Load more</button> -->
     <script type="module" src="./index.js"></script>
     <script src="../node_modules/notiflix/dist/notiflix-aio-3.2.6.min.js"></script>
   </body>
