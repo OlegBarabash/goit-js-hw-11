@@ -21,7 +21,7 @@ search.addEventListener('submit', handlerSearch);
 
 const options = {
   root: null,
-  rootMargin: '300px',
+  rootMargin: '400px',
   threshold: 0,
 };
 
@@ -53,7 +53,7 @@ function handlerInfiniteScroll(entries) {
 async function handlerLoadeMore() {
   page += 1;
   await renderCards();
-  smoothScroll();
+  //smoothScroll();
 }
 
 async function renderCards() {
@@ -126,13 +126,13 @@ function getMarkup(arr) {
   return markap;
 }
 
-function smoothScroll() {
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
+// function smoothScroll() {
+//   const { height: cardHeight } = document
+//     .querySelector('.gallery')
+//     .firstElementChild.getBoundingClientRect();
 
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
-}
+//   window.scrollBy({
+//     top: cardHeight * 2,
+//     behavior: 'smooth',
+//   });
+// }
